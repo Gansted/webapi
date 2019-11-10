@@ -18,14 +18,12 @@ namespace BookApp.Controllers
     [EnableCors(origins: "*", headers: "accept,Auth-Key", methods: "*")]
     public class UserController : ApiController
     {
-        private IBookRepository BookRepository;
         private IBookService BookService;
         private IUserService UserService;
 
         public UserController() {
         }
-        public UserController(IBookRepository bookRepository, IUserService userService, IBookService bookService) {
-            BookRepository = bookRepository;
+        public UserController(IUserService userService, IBookService bookService) {
             UserService = userService;
             BookService = bookService;
         }
@@ -113,9 +111,8 @@ namespace BookApp.Controllers
                     ErrorDescription = "Bad Request. Provide valid userId guid. Can't be empty guid.",
                     HttpStatus = HttpStatusCode.BadRequest
                 };
-            BookRepository.Add(book);
-            BookRepository.SaveChanges();
-            var result = BookRepository.GetBookByID(book.Id);
+            BookService.AddBook(book);
+            var result = BookService.GetBookById(book.Id);
             if (result != null)
                 return Request.CreateResponse(HttpStatusCode.OK, result, JsonFormatter);
             else
